@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -60,6 +62,7 @@ class _WaitingScreenState extends State<WaitingScreen> {
                           left: 20, right: 20, top: 10, bottom: 10),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        // ignore: prefer_const_literals_to_create_immutables
                         children: [
                           Text(
                             'GAME PIN:',

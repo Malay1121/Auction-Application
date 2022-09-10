@@ -1,5 +1,6 @@
+import 'dart:convert';
 import 'dart:ui';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 class GamePin extends StatefulWidget {
@@ -12,6 +13,7 @@ class GamePin extends StatefulWidget {
 class _GamePinState extends State<GamePin> {
   @override
   Widget build(BuildContext context) {
+    TextEditingController gamePinController = TextEditingController();
     return Scaffold(
       body: Column(
         children: [
@@ -31,6 +33,7 @@ class _GamePinState extends State<GamePin> {
                         height: 40,
                         width: 200,
                         child: TextField(
+                          controller: gamePinController,
                           style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
@@ -71,9 +74,13 @@ class _GamePinState extends State<GamePin> {
                       GestureDetector(
                         onTap: () {
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => GamePin2()));
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => GamePin2(
+                                code: int.parse(gamePinController.text),
+                              ),
+                            ),
+                          );
                         },
                         child: Container(
                           height: 40,
@@ -107,7 +114,8 @@ class _GamePinState extends State<GamePin> {
 }
 
 class GamePin2 extends StatefulWidget {
-  const GamePin2({Key? key}) : super(key: key);
+  const GamePin2({Key? key, required this.code}) : super(key: key);
+  final int code;
 
   @override
   State<GamePin2> createState() => _GamePin2State();
@@ -116,6 +124,7 @@ class GamePin2 extends StatefulWidget {
 class _GamePin2State extends State<GamePin2> {
   @override
   Widget build(BuildContext context) {
+    TextEditingController nickname = TextEditingController();
     return Scaffold(
       body: Column(
         children: [
@@ -173,7 +182,19 @@ class _GamePin2State extends State<GamePin2> {
                         ),
                       ),
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
+                          final response = await http.post(
+                            Uri.parse(
+                                'https://dc6e-43-248-34-162.ngrok.io/add-player'),
+                            headers: {
+                              'Content-Type': 'application/json',
+                            },
+                            body: jsonEncode({
+                              'gamepin': widget.code,
+                              'name': nickname.text,
+                            }),
+                          );
+                          print(response.body);
                           Navigator.push(
                               context,
                               MaterialPageRoute(

@@ -19,25 +19,25 @@ class CreateAuction extends StatefulWidget {
   State<CreateAuction> createState() => _CreateAuctionState();
 }
 
-Map<String, List> _auction = {
+var _auction = {
   'players_model': [
     {
       'name': 'Malay Patel',
       'image':
           'https://media-exp1.licdn.com/dms/image/C4D03AQHIDwoa53KArQ/profile-displayphoto-shrink_800_800/0/1640676164585?e=1668038400&v=beta&t=o8EESGzp2SPGUK55LD63IBaLOUiX37cGis7PzZOauPk',
-      'start': 10000000,
+      'start': 1,
     },
     {
       'name': 'Uvesh Rajwani',
       'image':
           'https://media-exp1.licdn.com/dms/image/C4D03AQHIDwoa53KArQ/profile-displayphoto-shrink_800_800/0/1640676164585?e=1668038400&v=beta&t=o8EESGzp2SPGUK55LD63IBaLOUiX37cGis7PzZOauPk',
-      'start': 150,
+      'start': 1,
     },
     {
       'name': 'Vivaana Batki',
       'image':
           'https://media-exp1.licdn.com/dms/image/C4D03AQHIDwoa53KArQ/profile-displayphoto-shrink_800_800/0/1640676164585?e=1668038400&v=beta&t=o8EESGzp2SPGUK55LD63IBaLOUiX37cGis7PzZOauPk',
-      'start': 1000000000000000000,
+      'start': 1,
     },
   ]
 };
@@ -97,15 +97,15 @@ class _CreateAuctionState extends State<CreateAuction> {
                 //   data: {"done": "done"},
                 // );
 
-                final response = await http.get(
-                  Uri.parse('https://dc6e-43-248-34-162.ngrok.io/get-auction'),
-                  // headers: {
-                  //   'Content-Type': 'application/json',
-                  // },
-                  // body: jsonEncode({
-                  //   'title': 'title',
-                  //   'body': 'ss',
-                  // }),
+                final response = await http.post(
+                  Uri.parse('https://dc6e-43-248-34-162.ngrok.io/add-auction'),
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: jsonEncode({
+                    'title': 'title',
+                    'body': 'ss',
+                  }),
                 );
                 print(response.body);
                 print(jsonEncode(_auction));
@@ -181,41 +181,41 @@ class _CreateAuctionState extends State<CreateAuction> {
               ),
             ),
           ),
-          // for (var auction in _auction['players_model'])
-          //   Padding(
-          //     padding: EdgeInsets.all(8.0),
-          //     child: Card(
-          //       child: Padding(
-          //         padding: EdgeInsets.all(8.0),
-          //         child: Row(
-          //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //           children: [
-          //             CircleAvatar(
-          //               backgroundImage: NetworkImage(
-          //                 auction['image'],
-          //               ),
-          //             ),
-          //             Text(
-          //               auction['name'],
-          //               style: TextStyle(
-          //                 color: Colors.black,
-          //                 fontWeight: FontWeight.bold,
-          //                 fontSize: 20,
-          //               ),
-          //             ),
-          //             Text(
-          //               'Starting price:- ${auction['start']}',
-          //               style: TextStyle(
-          //                 color: Colors.black,
-          //                 fontWeight: FontWeight.bold,
-          //                 fontSize: 20,
-          //               ),
-          //             ),
-          //           ],
-          //         ),
-          //       ),
-          //     ),
-          //   ),
+          for (var auction in _auction['players_model']!)
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Card(
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: NetworkImage(
+                          auction['image'] as String,
+                        ),
+                      ),
+                      Text(
+                        auction['name'] as String,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
+                      Text(
+                        'Starting price:- ${auction['start']}',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );

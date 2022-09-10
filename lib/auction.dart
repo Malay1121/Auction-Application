@@ -1,4 +1,9 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+
+import 'package:http/http.dart' as http;
 
 class AuctionScreen extends StatefulWidget {
   const AuctionScreen({Key? key}) : super(key: key);
@@ -7,7 +12,44 @@ class AuctionScreen extends StatefulWidget {
   State<AuctionScreen> createState() => _AuctionScreenState();
 }
 
+late Timer _timer;
+int _start = 30;
+bool bidEnd = false;
+bool lessThanFive = false;
+
 class _AuctionScreenState extends State<AuctionScreen> {
+  void newPlayer() {}
+  void startTimer() {
+    const oneSec = const Duration(seconds: 1);
+    _timer = Timer.periodic(
+      oneSec,
+      (Timer timer) {
+        if (_start == 0) {
+          setState(() {
+            timer.cancel();
+            newPlayer();
+            _start = 30;
+          });
+        } else {
+          setState(() {
+            _start--;
+          });
+        }
+        if (_start <= 5) {
+          setState(() {
+            lessThanFive = true;
+          });
+        }
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    startTimer();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,14 +60,40 @@ class _AuctionScreenState extends State<AuctionScreen> {
             height: MediaQuery.of(context).size.height / 10,
             width: double.infinity,
             color: Colors.white,
-            child: Center(
-              child: Text(
-                'Cricketer 1',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                ),
+            child: Padding(
+              padding: EdgeInsets.only(left: 15, right: 15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '00:$_start',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30,
+                    ),
+                  ),
+                  Center(
+                    child: Text(
+                      'Cricketer 1',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                      ),
+                    ),
+                  ),
+                  Card(
+                    child: Text(
+                      '60',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 30,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -48,30 +116,67 @@ class _AuctionScreenState extends State<AuctionScreen> {
             height: 10,
           ),
           Expanded(
-            child: Card(
-              color: Colors.blue,
-              child: Center(
-                child: Text(
-                  '10 lakhs',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 25,
+            child: GestureDetector(
+              onTap: () async {
+                // final response = await http.post(
+                //   Uri.parse('https://dc6e-43-248-34-162.ngrok.io/new-bid'),
+                //   headers: {
+                //     'Content-Type': 'application/json',
+                //   },
+                //   body: jsonEncode({
+                //     'bidBy': 'Mohit',
+                //     'bidByMoney': 0.1,
+                //   }),
+                // );
+                // print(response.body);
+                setState(() {
+                  lessThanFive == true ? _start = 5 : null;
+                });
+              },
+              child: Card(
+                color: Colors.blue,
+                child: Center(
+                  child: Text(
+                    '0.1',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25,
+                    ),
                   ),
                 ),
               ),
             ),
           ),
           Expanded(
-            child: Card(
-              color: Colors.red,
-              child: Center(
-                child: Text(
-                  '20 Lakh',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 25,
+            child: GestureDetector(
+              onTap: () async {
+                // final response = await http.post(
+                //   Uri.parse('https://dc6e-43-248-34-162.ngrok.io/new-bid'),
+                //   headers: {
+                //     'Content-Type': 'application/json',
+                //   },
+                //   body: jsonEncode({
+                //     'bidBy': 'Mohit',
+                //     'bidByMoney': 0.2,
+                //   }),
+                // );
+                // print(response.body);
+
+                setState(() {
+                  lessThanFive == true ? _start = 5 : null;
+                });
+              },
+              child: Card(
+                color: Colors.red,
+                child: Center(
+                  child: Text(
+                    '0.2',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25,
+                    ),
                   ),
                 ),
               ),
