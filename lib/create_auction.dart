@@ -19,7 +19,7 @@ class CreateAuction extends StatefulWidget {
   State<CreateAuction> createState() => _CreateAuctionState();
 }
 
-var _auction = {
+var auction = {
   'players_model': [
     {
       'name': 'Malay Patel',
@@ -54,7 +54,7 @@ class _CreateAuctionState extends State<CreateAuction> {
             child: GestureDetector(
               onTap: () {
                 setState(() {
-                  _auction['players_model']!.add({
+                  auction['players_model']!.add({
                     'name': nameController.text,
                     'image': imageController.text,
                     'start': int.parse(priceController.text),
@@ -108,7 +108,7 @@ class _CreateAuctionState extends State<CreateAuction> {
                   }),
                 );
                 print(response.body);
-                print(jsonEncode(_auction));
+                print(jsonEncode(auction));
               },
               child: Container(
                 height: 40,
@@ -181,7 +181,7 @@ class _CreateAuctionState extends State<CreateAuction> {
               ),
             ),
           ),
-          for (var auction in _auction['players_model']!)
+          for (var auction in auction['players_model']!)
             Padding(
               padding: EdgeInsets.all(8.0),
               child: Card(

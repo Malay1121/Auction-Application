@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:auction/create_auction.dart';
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
@@ -16,9 +17,10 @@ late Timer _timer;
 int _start = 30;
 bool bidEnd = false;
 bool lessThanFive = false;
+int index = 0;
+double totalMoney = 60;
 
 class _AuctionScreenState extends State<AuctionScreen> {
-  void newPlayer() {}
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
     _timer = Timer.periodic(
@@ -26,9 +28,20 @@ class _AuctionScreenState extends State<AuctionScreen> {
       (Timer timer) {
         if (_start == 0) {
           setState(() {
-            timer.cancel();
-            newPlayer();
-            _start = 30;
+            _start = 3;
+
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return Container(
+                    child: Text('Sold'),
+                  );
+                });
+            Future.delayed(Duration(seconds: 3), () {
+              _start = 30;
+              index = index + 1;
+              Navigator.pop(context);
+            });
           });
         } else {
           setState(() {
@@ -74,18 +87,36 @@ class _AuctionScreenState extends State<AuctionScreen> {
                     ),
                   ),
                   Center(
-                    child: Text(
-                      'Cricketer 1',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 30,
-                      ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          auction['players_model']![index]['name'] as String,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30,
+                          ),
+                        ),
+                        Text(
+                          'Price:- ' +
+                              double.parse(auction['players_model']![index]
+                                          ['start']
+                                      .toString())
+                                  .toStringAsFixed(1)
+                                  .toString(),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 25,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Card(
                     child: Text(
-                      '60',
+                      totalMoney.toStringAsFixed(1),
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w600,
@@ -106,8 +137,9 @@ class _AuctionScreenState extends State<AuctionScreen> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               image: DecorationImage(
+                fit: BoxFit.fitHeight,
                 image: NetworkImage(
-                  'https://img1.hscicdn.com/image/upload/f_auto/lsci/db/PICTURES/CMS/305600/305646.3.jpg',
+                  auction['players_model']![index]['image'] as String,
                 ),
               ),
             ),
@@ -129,8 +161,15 @@ class _AuctionScreenState extends State<AuctionScreen> {
                 //   }),
                 // );
                 // print(response.body);
+
                 setState(() {
+                  auction['players_model']![index]['start'] = double.parse(
+                          auction['players_model']![index]['start']
+                              .toString()) +
+                      0.1;
+
                   lessThanFive == true ? _start = 5 : null;
+                  totalMoney = totalMoney - 0.1;
                 });
               },
               child: Card(
@@ -164,6 +203,11 @@ class _AuctionScreenState extends State<AuctionScreen> {
                 // print(response.body);
 
                 setState(() {
+                  auction['players_model']![index]['start'] = double.parse(
+                          auction['players_model']![index]['start']
+                              .toString()) +
+                      0.2;
+                  totalMoney = totalMoney - 0.2;
                   lessThanFive == true ? _start = 5 : null;
                 });
               },
