@@ -38,11 +38,11 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
   @override
   void initState() {
     viewChannel = WebSocketChannel.connect(
-      Uri.parse('ws://172.105.41.217:8000/ws/view-only'),
+      Uri.parse('ws://127.0.0.1:8000/ws/view-only'),
     );
     viewChannel.sink.add(jsonEncode({'event': 'start_auction'}));
     http.get(
-      Uri.parse('http://172.105.41.217:8000/start-aution'),
+      Uri.parse('http://127.0.0.1:8000/start-aution'),
     );
     viewChannel.stream.listen((event) {
       String data = event.toString();
@@ -74,8 +74,7 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
                 AudioPlayer player = AudioPlayer();
                 player.play(
                   // AssetSource(unsoldMusic[Random().nextInt(1)]),
-                  UrlSource(
-                      "http://172.105.41.217:8000/download/player_unsold"),
+                  UrlSource("http://127.0.0.1:8000/download/player_unsold"),
                 );
                 Future.delayed(Duration(seconds: 7), () {
                   player.stop();
@@ -104,7 +103,7 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
                 AudioPlayer player = AudioPlayer();
                 player.play(
                   // AssetSource(unsoldMusic[Random().nextInt(1)]),
-                  UrlSource("http://172.105.41.217:8000/download/player_sold"),
+                  UrlSource("http://127.0.0.1:8000/download/player_sold"),
                 );
                 Future.delayed(Duration(seconds: 7), () {
                   player.stop();

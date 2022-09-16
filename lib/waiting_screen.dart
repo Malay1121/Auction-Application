@@ -30,7 +30,7 @@ class _WaitingScreenState extends State<WaitingScreen> {
   @override
   void initState() {
     viewChannel = WebSocketChannel.connect(
-      Uri.parse('ws://172.105.41.217:8000/ws/view-only'),
+      Uri.parse('ws://127.0.0.1:8000/ws/view-only'),
     );
 
     // TODO: implement initState

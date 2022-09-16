@@ -16,11 +16,7 @@ class AuctionScreen extends StatefulWidget {
   State<AuctionScreen> createState() => _AuctionScreenState();
 }
 
-bool bidEnd = false;
-bool lessThanFive = false;
-int index = 0;
-double totalMoney = 60;
-var moneyData = {'name': 'player', 'money': 600};
+var moneyData = {'money': 500};
 
 class _AuctionScreenState extends State<AuctionScreen> {
   @override
@@ -28,18 +24,14 @@ class _AuctionScreenState extends State<AuctionScreen> {
     // TODO: implement initState
 
     mentorChannel = WebSocketChannel.connect(
-        Uri.parse('ws://172.105.41.217:8000/ws/${widget.name}'));
+        Uri.parse('ws://127.0.0.1:8000/ws/${widget.name}'));
     mentorChannel.stream.listen((event) {
-      String data = event.toString();
-
+      String data = event;
+      print(data);
       setState(() {
-        moneyData = jsonDecode(data) == null
-            ? {
-                'name': 'Loading.... shaanti rakho',
-                'price': 10,
-                'bid_by': 'Not bidded yet!',
-              }
-            : jsonDecode(data);
+        moneyData = data as Map<String, int>;
+
+        print(moneyData);
       });
     });
   }
@@ -61,9 +53,7 @@ class _AuctionScreenState extends State<AuctionScreen> {
                 children: [
                   Card(
                     child: Text(
-                      'Money:- ' +
-                          (int.parse(moneyData['money'].toString()) / 1)
-                              .toString(),
+                      'Money:- ' + (moneyData["money"]! / 10).toString(),
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w600,
@@ -93,13 +83,6 @@ class _AuctionScreenState extends State<AuctionScreen> {
                   'event': 'new_bid',
                   'para': {'price': 1, 'bid_by': widget.name}
                 }));
-
-                setState(() {
-                  auction['players_model']![index]['start'] = double.parse(
-                          auction['players_model']![index]['start']
-                              .toString()) +
-                      0.1;
-                });
               },
               child: Card(
                 color: Colors.blue,
@@ -135,13 +118,6 @@ class _AuctionScreenState extends State<AuctionScreen> {
                   'event': 'new_bid',
                   'para': {'price': 2, 'bid_by': widget.name}
                 }));
-
-                setState(() {
-                  auction['players_model']![index]['start'] = double.parse(
-                          auction['players_model']![index]['start']
-                              .toString()) +
-                      0.2;
-                });
               },
               child: Card(
                 color: Colors.red,

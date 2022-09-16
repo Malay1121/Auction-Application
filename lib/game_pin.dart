@@ -85,7 +85,7 @@ class _GamePin2State extends State<GamePin2> {
                         onTap: () async {
                           mentorChannel = WebSocketChannel.connect(
                             Uri.parse(
-                                'ws://172.105.41.217:8000/ws/${nickname.text}'),
+                                'ws://127.0.0.1:8000/ws/${nickname.text}'),
                           );
                           Navigator.push(
                               context,
