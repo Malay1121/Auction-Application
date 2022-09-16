@@ -33,13 +33,6 @@ class _MainScreenState extends State<MainScreen> {
           },
         ),
         GestureDetector(
-          child: Text('Bidding screen'),
-          onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => AuctionScreen()));
-          },
-        ),
-        GestureDetector(
           child: Text('Game Pin'),
           onTap: () {
             Navigator.push(

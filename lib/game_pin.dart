@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
+import 'package:auction/auction.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -81,14 +83,9 @@ class _GamePin2State extends State<GamePin2> {
                       ),
                       GestureDetector(
                         onTap: () async {
-                          await http.post(
-                            Uri.parse('http://172.105.41.217:8000/add-mentor'),
-                            body: jsonEncode({
-                              'name': nickname.text,
-                            }),
-                            headers: {
-                              'Content-Type': 'application/json',
-                            },
+                          mentorChannel = WebSocketChannel.connect(
+                            Uri.parse(
+                                'ws://172.105.41.217:8000/ws/${nickname.text}'),
                           );
                           Navigator.push(
                               context,
@@ -128,6 +125,10 @@ class _GamePin2State extends State<GamePin2> {
   }
 }
 
+late WebSocketChannel mentorChannel;
+
+var eventStart = {'event': 'none'};
+
 class GamePinWaiting extends StatefulWidget {
   const GamePinWaiting({Key? key, required this.name}) : super(key: key);
   final String name;
@@ -140,6 +141,19 @@ class _GamePinWaitingState extends State<GamePinWaiting> {
   @override
   void initState() {
     // TODO: implement initState
+
+    mentorChannel.stream.listen((event) {
+      setState(() {
+        var data = event.toString();
+
+        if (data == '{"event": "start_auction"}') {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AuctionScreen(name: widget.name)));
+        }
+      });
+    });
   }
 
   @override
@@ -166,7 +180,7 @@ class _GamePinWaitingState extends State<GamePinWaiting> {
                     height: 20,
                   ),
                   Text(
-                    'See your nickname on screen?',
+                    'See your nickname on screen?' + eventStart.toString(),
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

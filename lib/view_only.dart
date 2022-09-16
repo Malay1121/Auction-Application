@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:html';
 import 'dart:math';
+import 'package:http/http.dart' as http;
 
 import 'package:auction/game_pin.dart';
 import 'package:auction/waiting_screen.dart';
@@ -40,6 +41,9 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
       Uri.parse('ws://172.105.41.217:8000/ws/view-only'),
     );
     viewChannel.sink.add(jsonEncode({'event': 'start_auction'}));
+    http.get(
+      Uri.parse('http://172.105.41.217:8000/start-aution'),
+    );
     viewChannel.stream.listen((event) {
       String data = event.toString();
       if (start <= 5) {
@@ -112,6 +116,16 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
                     "event": "player_sold",
                     "para": {"sold_to": dataInJson['bid_by']}
                   }));
+                  viewChannel.sink.add(
+                    jsonEncode(
+                      {
+                        'event': 'update_money',
+                        'para': {
+                          'mentor': dataInJson['bid_by'],
+                        },
+                      },
+                    ),
+                  );
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {

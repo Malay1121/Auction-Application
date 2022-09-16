@@ -7,6 +7,7 @@ import 'package:auction/view_only.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:http/http.dart' as http;
 
 class WaitingScreen extends StatefulWidget {
   const WaitingScreen({Key? key}) : super(key: key);
@@ -19,18 +20,18 @@ bool players = false;
 
 final player = AudioPlayer();
 
-var playersJson = {'name': 'Mohit sir'};
+List playerList = [
+  {'name': 'Mohit sir'}
+];
 
 late WebSocketChannel viewChannel;
 
 class _WaitingScreenState extends State<WaitingScreen> {
   @override
   void initState() {
-    setState(() {
-      viewChannel = WebSocketChannel.connect(
-        Uri.parse('ws://172.105.41.217:8000/ws/view-only'),
-      );
-    });
+    viewChannel = WebSocketChannel.connect(
+      Uri.parse('ws://172.105.41.217:8000/ws/view-only'),
+    );
 
     // TODO: implement initState
     player.play(
@@ -46,11 +47,7 @@ class _WaitingScreenState extends State<WaitingScreen> {
       String data = event.toString();
 
       setState(() {
-        playersJson = jsonDecode(data) == null
-            ? {
-                'name': 'Mohit sir',
-              }
-            : jsonDecode(data);
+        playerList.add(jsonDecode(data));
       });
     });
   }
@@ -62,8 +59,10 @@ class _WaitingScreenState extends State<WaitingScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           viewChannel.sink.close();
+
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => ViewOnlyScreen()));
+          player.stop();
         },
         child: Text('Start'),
       ),
@@ -148,26 +147,27 @@ class _WaitingScreenState extends State<WaitingScreen> {
                     : Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          SizedBox(
-                            height: 60,
-                            child: Card(
-                              color: Colors.black.withOpacity(0.5),
-                              child: Center(
-                                child: Padding(
-                                  padding:
-                                      EdgeInsets.only(left: 10.0, right: 10),
-                                  child: Text(
-                                    playersJson['name']!,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 22,
+                          for (var player in playerList)
+                            SizedBox(
+                              height: 60,
+                              child: Card(
+                                color: Colors.black.withOpacity(0.5),
+                                child: Center(
+                                  child: Padding(
+                                    padding:
+                                        EdgeInsets.only(left: 10.0, right: 10),
+                                    child: Text(
+                                      player['name']!,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 22,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
                         ],
                       ),
               ),
