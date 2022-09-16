@@ -1,8 +1,12 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:convert';
 import 'dart:math';
+import 'package:auction/game_pin.dart';
+import 'package:auction/view_only.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class WaitingScreen extends StatefulWidget {
   const WaitingScreen({Key? key}) : super(key: key);
@@ -15,9 +19,19 @@ bool players = false;
 
 final player = AudioPlayer();
 
+var playersJson = {'name': 'Mohit sir'};
+
+late WebSocketChannel viewChannel;
+
 class _WaitingScreenState extends State<WaitingScreen> {
   @override
   void initState() {
+    setState(() {
+      viewChannel = WebSocketChannel.connect(
+        Uri.parse('ws://172.105.41.217:8000/ws/view-only'),
+      );
+    });
+
     // TODO: implement initState
     player.play(
       UrlSource(
@@ -28,21 +42,31 @@ class _WaitingScreenState extends State<WaitingScreen> {
       player.play(UrlSource(
           'https://iringtones.net/wp-admin/audio-user/115669426580497490804/baby-shark.mp3'));
     });
+    viewChannel.stream.listen((event) {
+      String data = event.toString();
+
+      setState(() {
+        playersJson = jsonDecode(data) == null
+            ? {
+                'name': 'Mohit sir',
+              }
+            : jsonDecode(data);
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     var _play = false;
     return Scaffold(
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        player.onPlayerStateChanged.listen((PlayerState s) {
-          if (s == PlayerState.playing) {
-            player.pause();
-          } else {
-            player.resume();
-          }
-        });
-      }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          viewChannel.sink.close();
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ViewOnlyScreen()));
+        },
+        child: Text('Start'),
+      ),
       body: Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -73,7 +97,7 @@ class _WaitingScreenState extends State<WaitingScreen> {
                             ),
                           ),
                           Text(
-                            '502 059',
+                            'Kal aana kal',
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 100,
@@ -133,47 +157,7 @@ class _WaitingScreenState extends State<WaitingScreen> {
                                   padding:
                                       EdgeInsets.only(left: 10.0, right: 10),
                                   child: Text(
-                                    'Player 1',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 22,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 60,
-                            child: Card(
-                              color: Colors.black.withOpacity(0.5),
-                              child: Center(
-                                child: Padding(
-                                  padding:
-                                      EdgeInsets.only(left: 10.0, right: 10),
-                                  child: Text(
-                                    'Player 1',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 22,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 60,
-                            child: Card(
-                              color: Colors.black.withOpacity(0.5),
-                              child: Center(
-                                child: Padding(
-                                  padding:
-                                      EdgeInsets.only(left: 10.0, right: 10),
-                                  child: Text(
-                                    'Player 1',
+                                    playersJson['name']!,
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w700,

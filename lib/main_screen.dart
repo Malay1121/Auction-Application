@@ -43,7 +43,7 @@ class _MainScreenState extends State<MainScreen> {
           child: Text('Game Pin'),
           onTap: () {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => GamePin()));
+                context, MaterialPageRoute(builder: (context) => GamePin2()));
           },
         ),
         GestureDetector(

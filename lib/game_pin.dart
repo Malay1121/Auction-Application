@@ -2,126 +2,23 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-
-class GamePin extends StatefulWidget {
-  const GamePin({Key? key}) : super(key: key);
-
-  @override
-  State<GamePin> createState() => _GamePinState();
-}
-
-class _GamePinState extends State<GamePin> {
-  @override
-  Widget build(BuildContext context) {
-    TextEditingController gamePinController = TextEditingController();
-    return Scaffold(
-      body: Column(
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.height,
-            width: double.infinity,
-            color: Color.fromRGBO(70, 23, 143, 1),
-            child: Center(
-              child: SizedBox(
-                height: 130,
-                width: 300,
-                child: Card(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      SizedBox(
-                        height: 40,
-                        width: 200,
-                        child: TextField(
-                          controller: gamePinController,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
-                          textAlign: TextAlign.center,
-                          scrollPadding: EdgeInsets.zero,
-                          textAlignVertical: TextAlignVertical.center,
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.zero,
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Color(0xFFCCCCCC),
-                                width: 2,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Color(0xFFCCCCCC),
-                                width: 2,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Color(0xFFCCCCCC),
-                                width: 2,
-                              ),
-                            ),
-                            hintText: 'Game PIN',
-                            hintStyle: TextStyle(
-                              color: Color(0xFFB2B2B2),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => GamePin2(
-                                code: int.parse(gamePinController.text),
-                              ),
-                            ),
-                          );
-                        },
-                        child: Container(
-                          height: 40,
-                          width: 200,
-                          decoration: BoxDecoration(
-                            color: Color(0xFF2F2F2F),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Enter',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class GamePin2 extends StatefulWidget {
-  const GamePin2({Key? key, required this.code}) : super(key: key);
-  final int code;
+  const GamePin2({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<GamePin2> createState() => _GamePin2State();
 }
 
 class _GamePin2State extends State<GamePin2> {
+  @override
+  void initState() {
+    // TODO: implement initState
+  }
+
   @override
   Widget build(BuildContext context) {
     TextEditingController nickname = TextEditingController();
@@ -144,6 +41,7 @@ class _GamePin2State extends State<GamePin2> {
                         height: 40,
                         width: 200,
                         child: TextField(
+                          controller: nickname,
                           style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
@@ -183,22 +81,21 @@ class _GamePin2State extends State<GamePin2> {
                       ),
                       GestureDetector(
                         onTap: () async {
-                          final response = await http.post(
-                            Uri.parse(
-                                'https://dc6e-43-248-34-162.ngrok.io/add-player'),
+                          await http.post(
+                            Uri.parse('http://172.105.41.217:8000/add-mentor'),
+                            body: jsonEncode({
+                              'name': nickname.text,
+                            }),
                             headers: {
                               'Content-Type': 'application/json',
                             },
-                            body: jsonEncode({
-                              'gamepin': widget.code,
-                              'name': nickname.text,
-                            }),
                           );
-                          print(response.body);
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => GamePinWaiting()));
+                                  builder: (context) => GamePinWaiting(
+                                        name: nickname.text,
+                                      )));
                         },
                         child: Container(
                           height: 40,
@@ -232,13 +129,19 @@ class _GamePin2State extends State<GamePin2> {
 }
 
 class GamePinWaiting extends StatefulWidget {
-  const GamePinWaiting({Key? key}) : super(key: key);
+  const GamePinWaiting({Key? key, required this.name}) : super(key: key);
+  final String name;
 
   @override
   State<GamePinWaiting> createState() => _GamePinWaitingState();
 }
 
 class _GamePinWaitingState extends State<GamePinWaiting> {
+  @override
+  void initState() {
+    // TODO: implement initState
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -284,7 +187,7 @@ class _GamePinWaitingState extends State<GamePinWaiting> {
                 Padding(
                   padding: EdgeInsets.only(left: 35.0),
                   child: Text(
-                    'Player 1',
+                    widget.name.toString(),
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w800,

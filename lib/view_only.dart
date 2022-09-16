@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:html';
+import 'dart:math';
 
+import 'package:auction/game_pin.dart';
+import 'package:auction/waiting_screen.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -20,11 +23,10 @@ bool lessThanFive = false;
 
 class _ViewOnlyScreenState extends State<ViewOnlyScreen>
     with TickerProviderStateMixin {
-  final channel = WebSocketChannel.connect(
-    Uri.parse(
-      'ws://172.105.41.217:8000/ws/view-only',
-    ),
-  );
+  List unsoldMusic = [
+    'bewafa',
+    'thukra',
+  ];
 
   var dataInJson = {
     'name': 'Loading.... shaanti rakho',
@@ -34,9 +36,13 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
 
   @override
   void initState() {
-    channel.stream.listen((event) {
+    viewChannel = WebSocketChannel.connect(
+      Uri.parse('ws://172.105.41.217:8000/ws/view-only'),
+    );
+    viewChannel.sink.add(jsonEncode({'event': 'start_auction'}));
+    viewChannel.stream.listen((event) {
       String data = event.toString();
-      if (lessThanFive == true) {
+      if (start <= 5) {
         setState(() {
           start = 5;
         });
@@ -50,12 +56,6 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
               }
             : jsonDecode(data);
       });
-
-      if (start <= 5) {
-        setState(() {
-          start = 5;
-        });
-      }
     });
     // TODO: implement initState
     void startTimer() {
@@ -69,15 +69,18 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
               if (dataInJson['bid_by'] == null) {
                 AudioPlayer player = AudioPlayer();
                 player.play(
+                  // AssetSource(unsoldMusic[Random().nextInt(1)]),
                   UrlSource(
-                    'https://www.mboxdrive.com/Bewafa%20Nikli%20Hai%20Tu.mp3',
-                  ),
+                      "http://172.105.41.217:8000/download/player_unsold"),
                 );
                 Future.delayed(Duration(seconds: 7), () {
                   player.stop();
+                  start = 30;
+                  Navigator.pop(context);
                 });
+
                 setState(() {
-                  channel.sink.add(jsonEncode({'event': 'player_unsold'}));
+                  viewChannel.sink.add(jsonEncode({'event': 'player_unsold'}));
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -94,8 +97,18 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
                 });
               }
               if (dataInJson['bid_by'] != null) {
+                AudioPlayer player = AudioPlayer();
+                player.play(
+                  // AssetSource(unsoldMusic[Random().nextInt(1)]),
+                  UrlSource("http://172.105.41.217:8000/download/player_sold"),
+                );
+                Future.delayed(Duration(seconds: 7), () {
+                  player.stop();
+                  start = 30;
+                  Navigator.pop(context);
+                });
                 setState(() {
-                  channel.sink.add(jsonEncode({
+                  viewChannel.sink.add(jsonEncode({
                     "event": "player_sold",
                     "para": {"sold_to": dataInJson['bid_by']}
                   }));
@@ -103,16 +116,17 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
                       context: context,
                       builder: (BuildContext context) {
                         return Container(
-                          child: Text('Sold'),
+                          child: Column(
+                            children: [
+                              Image.network(
+                                  'https://c.tenor.com/9xx5jJaHPpIAAAAd/fat-guy.gif'),
+                              Text('Sold'),
+                            ],
+                          ),
                         );
                       });
                 });
               }
-
-              Future.delayed(Duration(seconds: 7), () {
-                start = 30;
-                Navigator.pop(context);
-              });
             });
           } else {
             setState(() {

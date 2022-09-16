@@ -150,17 +150,17 @@ class _AuctionScreenState extends State<AuctionScreen> {
           Expanded(
             child: GestureDetector(
               onTap: () async {
-                // final response = await http.post(
-                //   Uri.parse('https://dc6e-43-248-34-162.ngrok.io/new-bid'),
-                //   headers: {
-                //     'Content-Type': 'application/json',
-                //   },
-                //   body: jsonEncode({
-                //     'bidBy': 'Mohit',
-                //     'bidByMoney': 0.1,
-                //   }),
-                // );
-                // print(response.body);
+                final response = await http.post(
+                  Uri.parse('https://dc6e-43-248-34-162.ngrok.io/new-bid'),
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: jsonEncode({
+                    'bidBy': 'Mohit',
+                    'bidByMoney': 0.1,
+                  }),
+                );
+                print(response.body);
 
                 setState(() {
                   auction['players_model']![index]['start'] = double.parse(
