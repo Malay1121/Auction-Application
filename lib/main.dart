@@ -1,4 +1,5 @@
 import 'package:auction/main_screen.dart';
+import 'package:auction/team_screen.dart';
 import 'package:auction/waiting_screen.dart';
 import 'package:flutter/material.dart';
 

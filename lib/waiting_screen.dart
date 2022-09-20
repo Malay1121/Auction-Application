@@ -30,14 +30,13 @@ class _WaitingScreenState extends State<WaitingScreen> {
   @override
   void initState() {
     viewChannel = WebSocketChannel.connect(
-      Uri.parse('ws://127.0.0.1:8000/ws/view-only'),
+      Uri.parse('ws://172.105.41.217:8000/ws/view-only'),
     );
 
     // TODO: implement initState
     player.play(
       UrlSource(
-        'https://iringtones.net/wp-admin/audio-user/115669426580497490804/baby-shark.mp3',
-      ),
+          'https://iringtones.net/wp-admin/audio-user/115669426580497490804/baby-shark.mp3'),
     );
     player.onPlayerComplete.listen((event) {
       player.play(UrlSource(

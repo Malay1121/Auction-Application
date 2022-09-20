@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:html';
-import 'dart:math';
+import 'package:auction/team_screen.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:auction/game_pin.dart';
 import 'package:auction/waiting_screen.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -38,12 +36,13 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
   @override
   void initState() {
     viewChannel = WebSocketChannel.connect(
-      Uri.parse('ws://127.0.0.1:8000/ws/view-only'),
+      Uri.parse('ws://172.105.41.217:8000/ws/view-only'),
+    );
+    http.get(
+      Uri.parse('http://172.105.41.217:8000/start-aution'),
     );
     viewChannel.sink.add(jsonEncode({'event': 'start_auction'}));
-    http.get(
-      Uri.parse('http://127.0.0.1:8000/start-aution'),
-    );
+
     viewChannel.stream.listen((event) {
       String data = event.toString();
       if (start <= 5) {
@@ -60,9 +59,17 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
               }
             : jsonDecode(data);
       });
+
+      if (data == '{"event": "end_auction"}') {
+        viewChannel.sink.close();
+        Navigator.pop(context);
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => TeamScreen()));
+        timer.cancel();
+      }
     });
     // TODO: implement initState
-    void startTimer() {
+    startTimer() {
       const oneSec = const Duration(seconds: 1);
       timer = Timer.periodic(
         oneSec,
@@ -74,7 +81,8 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
                 AudioPlayer player = AudioPlayer();
                 player.play(
                   // AssetSource(unsoldMusic[Random().nextInt(1)]),
-                  UrlSource("http://127.0.0.1:8000/download/player_unsold"),
+                  UrlSource(
+                      "http://172.105.41.217:8000/download/player_unsold"),
                 );
                 Future.delayed(Duration(seconds: 7), () {
                   player.stop();
@@ -82,9 +90,12 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
                   Navigator.pop(context);
                 });
 
-                setState(() {
-                  viewChannel.sink.add(jsonEncode({'event': 'player_unsold'}));
-                  showDialog(
+                setState(
+                  () {
+                    viewChannel.sink
+                        .add(jsonEncode({'event': 'player_unsold'}));
+
+                    showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return Container(
@@ -96,14 +107,16 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
                             ],
                           ),
                         );
-                      });
-                });
+                      },
+                    );
+                  },
+                );
               }
               if (dataInJson['bid_by'] != null) {
                 AudioPlayer player = AudioPlayer();
                 player.play(
                   // AssetSource(unsoldMusic[Random().nextInt(1)]),
-                  UrlSource("http://127.0.0.1:8000/download/player_sold"),
+                  UrlSource("http://172.105.41.217:8000/download/player_sold"),
                 );
                 Future.delayed(Duration(seconds: 7), () {
                   player.stop();
@@ -156,6 +169,7 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
       );
     }
 
+    ;
     startTimer();
   }
 

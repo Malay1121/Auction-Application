@@ -85,7 +85,7 @@ class _GamePin2State extends State<GamePin2> {
                         onTap: () async {
                           mentorChannel = WebSocketChannel.connect(
                             Uri.parse(
-                                'ws://127.0.0.1:8000/ws/${nickname.text}'),
+                                'ws://172.105.41.217:8000/ws/${nickname.text}'),
                           );
                           Navigator.push(
                               context,
@@ -151,6 +151,7 @@ class _GamePinWaitingState extends State<GamePinWaiting> {
               context,
               MaterialPageRoute(
                   builder: (context) => AuctionScreen(name: widget.name)));
+          mentorChannel.sink.close();
         }
       });
     });
@@ -180,7 +181,7 @@ class _GamePinWaitingState extends State<GamePinWaiting> {
                     height: 20,
                   ),
                   Text(
-                    'See your nickname on screen?' + eventStart.toString(),
+                    'See your nickname on screen?',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

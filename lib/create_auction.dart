@@ -25,19 +25,13 @@ var auction = {
       'name': 'Malay Patel',
       'image':
           'https://media-exp1.licdn.com/dms/image/C4D03AQHIDwoa53KArQ/profile-displayphoto-shrink_800_800/0/1640676164585?e=1668038400&v=beta&t=o8EESGzp2SPGUK55LD63IBaLOUiX37cGis7PzZOauPk',
-      'start': 1,
+      'price': 10,
     },
     {
       'name': 'Uvesh Rajwani',
       'image':
           'https://media-exp1.licdn.com/dms/image/C4D03AQHIDwoa53KArQ/profile-displayphoto-shrink_800_800/0/1640676164585?e=1668038400&v=beta&t=o8EESGzp2SPGUK55LD63IBaLOUiX37cGis7PzZOauPk',
-      'start': 1,
-    },
-    {
-      'name': 'Vivaana Batki',
-      'image':
-          'https://media-exp1.licdn.com/dms/image/C4D03AQHIDwoa53KArQ/profile-displayphoto-shrink_800_800/0/1640676164585?e=1668038400&v=beta&t=o8EESGzp2SPGUK55LD63IBaLOUiX37cGis7PzZOauPk',
-      'start': 1,
+      'price': 10,
     },
   ]
 };
@@ -46,9 +40,33 @@ class _CreateAuctionState extends State<CreateAuction> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: ListView(
         children: [
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => WaitingScreen()));
+              },
+              child: Container(
+                height: 40,
+                width: 130,
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                    child: Text(
+                  'Start Auction',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20),
+                )),
+              ),
+            ),
+          ),
           Padding(
             padding: EdgeInsets.all(8.0),
             child: GestureDetector(
@@ -57,7 +75,7 @@ class _CreateAuctionState extends State<CreateAuction> {
                   auction['players_model']!.add({
                     'name': nameController.text,
                     'image': imageController.text,
-                    'start': int.parse(priceController.text),
+                    'price': int.parse(priceController.text),
                   });
                 });
               },
@@ -83,29 +101,12 @@ class _CreateAuctionState extends State<CreateAuction> {
             padding: EdgeInsets.all(8.0),
             child: GestureDetector(
               onTap: () async {
-                // Requests.post(
-                //   'https://3cc9-43-248-34-162.ngrok.io/add-auction',
-                //   headers: <String, String>{
-                //     'Content-Type': 'application/json; charset=UTF-8',
-                //   },
-                //   body: {"done": "done"},
-                // );
-
-                // Dio().post(
-                //   'https://3cc9-43-248-34-162.ngrok.io/add-auction',
-                //   options: Options(contentType: Headers.jsonContentType),
-                //   data: {"done": "done"},
-                // );
-
                 final response = await http.post(
-                  Uri.parse('https://dc6e-43-248-34-162.ngrok.io/add-auction'),
+                  Uri.parse('http://172.105.41.217:8000/add-auction'),
                   headers: {
                     'Content-Type': 'application/json',
                   },
-                  body: jsonEncode({
-                    'title': 'title',
-                    'body': 'ss',
-                  }),
+                  body: jsonEncode(auction),
                 );
                 print(response.body);
                 print(jsonEncode(auction));
@@ -204,7 +205,7 @@ class _CreateAuctionState extends State<CreateAuction> {
                         ),
                       ),
                       Text(
-                        'Starting price:- ${auction['start']}',
+                        'Starting price:- ${auction['price']}',
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,

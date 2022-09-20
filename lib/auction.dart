@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:auction/create_auction.dart';
 import 'package:auction/game_pin.dart';
+import 'package:auction/team_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
@@ -16,7 +17,7 @@ class AuctionScreen extends StatefulWidget {
   State<AuctionScreen> createState() => _AuctionScreenState();
 }
 
-var moneyData = {'money': 500};
+String moneyData = '{"money":600}';
 
 class _AuctionScreenState extends State<AuctionScreen> {
   @override
@@ -24,20 +25,31 @@ class _AuctionScreenState extends State<AuctionScreen> {
     // TODO: implement initState
 
     mentorChannel = WebSocketChannel.connect(
-        Uri.parse('ws://127.0.0.1:8000/ws/${widget.name}'));
+        Uri.parse('ws://172.105.41.217:8000/ws/${widget.name}'));
     mentorChannel.stream.listen((event) {
-      String data = event;
-      print(data);
       setState(() {
-        moneyData = data as Map<String, int>;
+        String finalData = event.toString();
 
-        print(moneyData);
+        moneyData = finalData.toString();
       });
+      if (moneyData == '{"event": "end_auction"}') {
+        mentorChannel.sink.close();
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Text('See your team on the screen!'),
+          ),
+        );
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    moneyData = moneyData.replaceAll(RegExp(r'^[\{\}]', unicode: true), "");
+
+    moneyData = moneyData.substring(8, moneyData.length - 1);
+    var inInt = (double.parse(moneyData) / 10).toString();
     return Scaffold(
       backgroundColor: Color.fromRGBO(70, 23, 143, 1),
       body: Column(
@@ -53,7 +65,7 @@ class _AuctionScreenState extends State<AuctionScreen> {
                 children: [
                   Card(
                     child: Text(
-                      'Money:- ' + (moneyData["money"]! / 10).toString(),
+                      'Money:- ' + (inInt).toString() + ' cr',
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w600,
@@ -88,7 +100,7 @@ class _AuctionScreenState extends State<AuctionScreen> {
                 color: Colors.blue,
                 child: Center(
                   child: Text(
-                    '0.1',
+                    '10 Lakhs',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -123,7 +135,7 @@ class _AuctionScreenState extends State<AuctionScreen> {
                 color: Colors.red,
                 child: Center(
                   child: Text(
-                    '0.2',
+                    '20 Lakhs',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
