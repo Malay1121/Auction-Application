@@ -26,14 +26,20 @@ class _AuctionScreenState extends State<AuctionScreen> {
 
     mentorChannel = WebSocketChannel.connect(
         Uri.parse('ws://172.105.41.217:8000/ws/${widget.name}'));
-    mentorChannel.stream.listen((event) {
+    mentorChannel.stream.listen((event) async {
       setState(() {
         String finalData = event.toString();
 
         moneyData = finalData.toString();
       });
       if (moneyData == '{"event": "end_auction"}') {
-        mentorChannel.sink.close();
+        var getReq = await http.get(
+          Uri.parse('http://172.105.41.217:8000/show_teams'),
+        );
+        setState(() {
+          teamData = jsonDecode(getReq.body);
+        });
+
         Navigator.push(
           context,
           MaterialPageRoute(

@@ -1,3 +1,4 @@
+import 'package:auction/create_auction.dart';
 import 'package:auction/main_screen.dart';
 import 'package:auction/team_screen.dart';
 import 'package:auction/waiting_screen.dart';
@@ -14,11 +15,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MainScreen(),
+      home: CreateAuction(),
     );
   }
 }

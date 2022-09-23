@@ -19,22 +19,7 @@ class CreateAuction extends StatefulWidget {
   State<CreateAuction> createState() => _CreateAuctionState();
 }
 
-var auction = {
-  'players_model': [
-    {
-      'name': 'Malay Patel',
-      'image':
-          'https://media-exp1.licdn.com/dms/image/C4D03AQHIDwoa53KArQ/profile-displayphoto-shrink_800_800/0/1640676164585?e=1668038400&v=beta&t=o8EESGzp2SPGUK55LD63IBaLOUiX37cGis7PzZOauPk',
-      'price': 10,
-    },
-    {
-      'name': 'Uvesh Rajwani',
-      'image':
-          'https://media-exp1.licdn.com/dms/image/C4D03AQHIDwoa53KArQ/profile-displayphoto-shrink_800_800/0/1640676164585?e=1668038400&v=beta&t=o8EESGzp2SPGUK55LD63IBaLOUiX37cGis7PzZOauPk',
-      'price': 10,
-    },
-  ]
-};
+var auction = {'players_model': []};
 
 class _CreateAuctionState extends State<CreateAuction> {
   @override

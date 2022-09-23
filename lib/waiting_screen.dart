@@ -20,9 +20,7 @@ bool players = false;
 
 final player = AudioPlayer();
 
-List playerList = [
-  {'name': 'Mohit sir'}
-];
+List playerList = [];
 
 late WebSocketChannel viewChannel;
 
@@ -77,7 +75,7 @@ class _WaitingScreenState extends State<WaitingScreen> {
               ),
               child: Center(
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height / 5.5,
+                  height: MediaQuery.of(context).size.height / 4.8,
                   child: Card(
                     child: Padding(
                       padding: EdgeInsets.only(
@@ -98,7 +96,7 @@ class _WaitingScreenState extends State<WaitingScreen> {
                             'Kal aana kal',
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: 100,
+                              fontSize: 80,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -115,7 +113,7 @@ class _WaitingScreenState extends State<WaitingScreen> {
                 decoration: BoxDecoration(
                   color: Color.fromRGBO(70, 23, 143, 1),
                 ),
-                child: players == false
+                child: playerList == []
                     ? Center(
                         child: GestureDetector(
                           onTap: () {

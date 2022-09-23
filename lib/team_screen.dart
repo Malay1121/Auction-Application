@@ -69,10 +69,7 @@ Map teamData = jsonDecode(
 
 class _TeamScreenState extends State<TeamScreen> {
   @override
-  void initState() {}
-
-  @override
-  Widget build(BuildContext context) {
+  void initState() {
     getreq() async {
       var getReq = await http.get(
         Uri.parse('http://172.105.41.217:8000/show_teams'),
@@ -82,65 +79,84 @@ class _TeamScreenState extends State<TeamScreen> {
       });
     }
 
-    getreq();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getreq();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(70, 23, 143, 1),
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      body: Column(
         children: [
           GestureDetector(
-            onTap: () {
-              viewChannel.sink.add(jsonEncode({"event": "show_teams"}));
+            onTap: () async {
+              getreq() async {
+                var getReq = await http.get(
+                  Uri.parse('http://172.105.41.217:8000/show_teams'),
+                );
+                setState(() {
+                  teamData = jsonDecode(getReq.body);
+                });
+              }
+
+              await getreq();
             },
             child: Text('get'),
           ),
-          for (Map team in teamData['teams'])
-            for (var key in team.keys)
-              Container(
-                width: MediaQuery.of(context).size.width / 6 - 60,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.white70),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      key.toString(),
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 25,
-                      ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              for (Map team in teamData['teams'])
+                for (var key in team.keys)
+                  Container(
+                    width: MediaQuery.of(context).size.width / 6 - 60,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white70),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          key.toString(),
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 25,
+                          ),
+                        ),
+                        Divider(),
+                        for (var mentees in team[key])
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                mentees['name'].toString(),
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 20,
+                              ),
+                              Text(
+                                (mentees['price'] / 10).toString(),
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                      ],
                     ),
-                    Divider(),
-                    for (var mentees in team[key])
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            mentees['name'].toString(),
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          Text(
-                            mentees['price'].toString(),
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-                  ],
-                ),
-              ),
+                  ),
+            ],
+          ),
         ],
       ),
     );
