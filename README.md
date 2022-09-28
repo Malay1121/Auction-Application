@@ -1,6 +1,6 @@
 # auction
 
-This is an website which I and my friend made for a cricket tournament in our school. We made this website using Flutter/Dart and Python. I worked on Flutter/Dart and my friend worked on Python. We used Websockets and REST Api to make this project possible. We used this application to decide the teams.
+This is a website which I and my friend made for a cricket tournament in our school. We made this website using Flutter/Dart and Python. I worked on Flutter/Dart and my friend worked on Python. We used Websockets and REST Api to make this project possible. We used this application to decide the teams.
 
 ## How does it work
 
