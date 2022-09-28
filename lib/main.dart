@@ -1,4 +1,5 @@
 import 'package:auction/create_auction.dart';
+import 'package:auction/game_pin.dart';
 import 'package:auction/main_screen.dart';
 import 'package:auction/team_screen.dart';
 import 'package:auction/waiting_screen.dart';
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: CreateAuction(),
+      home: MainScreen(),
     );
   }
 }

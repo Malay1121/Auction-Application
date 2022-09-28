@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:html';
+import 'dart:math';
 import 'package:auction/team_screen.dart';
 import 'package:http/http.dart' as http;
 
@@ -21,6 +22,19 @@ int start = 30;
 bool bidEnd = false;
 bool lessThanFive = false;
 
+List unSold = [
+  'https://c.tenor.com/ucH_57n_at4AAAAM/froggiestoken-froggiescoin.gif',
+  'https://c.tenor.com/nfrPVOQcS_4AAAAC/friends.gif',
+  'https://c.tenor.com/do8q_eYrsW4AAAAM/crying-black-guy-meme.gif',
+];
+List sold = [
+  'https://c.tenor.com/9xx5jJaHPpIAAAAd/fat-guy.gif',
+  'https://c.tenor.com/baH5EAJ8upIAAAAM/sold-happy.gif',
+  'https://c.tenor.com/cuC38NE_ynAAAAAM/dog-cute.gif',
+  'https://media0.giphy.com/media/Jzxgefavt2aB2/200.gif',
+  'https://media1.giphy.com/media/SsIPF2HnLYlQnFGKsZ/200w.gif?cid=82a1493bfnzjv4e1ujkpouysxl1tzdldjrit8soeqbasur6i&rid=200w.gif&ct=g',
+];
+
 class _ViewOnlyScreenState extends State<ViewOnlyScreen>
     with TickerProviderStateMixin {
   List unsoldMusic = [
@@ -29,8 +43,9 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
   ];
 
   var dataInJson = {
-    'name': 'Loading.... shaanti rakho',
+    'name': 'Atharva',
     'price': 10,
+    'image': 'http://172.105.41.217:8000/get-image/atharva_dalal',
     'bid_by': null,
   };
 
@@ -56,9 +71,10 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
       setState(() {
         dataInJson = jsonDecode(data) == null
             ? {
-                'name': 'Loading.... shaanti rakho',
+                'name': 'Atharva',
                 'price': 10,
-                'bid_by': 'Not bidded yet!',
+                'image': 'http://172.105.41.217:8000/get-image/atharva_dalal',
+                'bid_by': null,
               }
             : jsonDecode(data);
       });
@@ -87,7 +103,7 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
                 player.play(
                   // AssetSource(unsoldMusic[Random().nextInt(1)]),
                   UrlSource(
-                      "http://172.105.41.217:8000/download/player_unsold"),
+                      'http://172.105.41.217:8000/download/player_unsold'),
                 );
                 Future.delayed(Duration(seconds: 7), () {
                   player.stop();
@@ -103,13 +119,67 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return Container(
-                          child: Column(
-                            children: [
-                              Image.network(
-                                  'https://c.tenor.com/do8q_eYrsW4AAAAC/crying-black-guy-meme.gif'),
-                              Text('Unsold :('),
-                            ],
+                        return Center(
+                          child: Container(
+                            height: MediaQuery.of(context).size.height / 1.25,
+                            width: MediaQuery.of(context).size.width / 2,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  Image.network(
+                                    unSold[Random().nextInt(sold.length)],
+                                    height:
+                                        MediaQuery.of(context).size.height / 2,
+                                    fit: BoxFit.fitHeight,
+                                  ),
+                                  SizedBox(
+                                    height:
+                                        MediaQuery.of(context).size.height / 20,
+                                  ),
+                                  Text(
+                                    'Unsold',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 24,
+                                      decoration: TextDecoration.none,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Name:- ' + dataInJson['name'].toString(),
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      decoration: TextDecoration.none,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Price:- None',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      decoration: TextDecoration.none,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Bid by:- None',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      decoration: TextDecoration.none,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         );
                       },
@@ -148,7 +218,7 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
                       builder: (BuildContext context) {
                         return Center(
                           child: Container(
-                            height: MediaQuery.of(context).size.height / 2,
+                            height: MediaQuery.of(context).size.height / 1.25,
                             width: MediaQuery.of(context).size.width / 2,
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -159,7 +229,15 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
                               child: Column(
                                 children: [
                                   Image.network(
-                                      'https://c.tenor.com/9xx5jJaHPpIAAAAd/fat-guy.gif'),
+                                    sold[Random().nextInt(sold.length)],
+                                    height:
+                                        MediaQuery.of(context).size.height / 2,
+                                    fit: BoxFit.fitHeight,
+                                  ),
+                                  SizedBox(
+                                    height:
+                                        MediaQuery.of(context).size.height / 20,
+                                  ),
                                   Text(
                                     'Sold',
                                     style: TextStyle(
@@ -221,7 +299,6 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
       );
     }
 
-    ;
     startTimer();
   }
 
@@ -232,7 +309,7 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
       body: Column(
         children: [
           Container(
-            height: MediaQuery.of(context).size.height / 10,
+            height: MediaQuery.of(context).size.height / 6,
             width: double.infinity,
             color: Colors.white,
             child: Row(
@@ -272,16 +349,9 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
               ],
             ),
           ),
-          SizedBox(
-            height: 30,
-          ),
           Container(
-            width: ((MediaQuery.of(context).size.width / 240 / 100) +
-                    (MediaQuery.of(context).size.height / 240 / 100)) /
-                2,
-            height: ((MediaQuery.of(context).size.width / 300 / 100) +
-                    (MediaQuery.of(context).size.height / 300 / 100)) /
-                2,
+            width: 400,
+            height: MediaQuery.of(context).size.height / 2,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               image: DecorationImage(
@@ -295,21 +365,28 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
           Spacer(),
           SizedBox(
             width: double.infinity - 1,
-            height: MediaQuery.of(context).size.height / 7,
-            child: Card(
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Center(
-                  child: Text(
-                    'Bid By:- '.toUpperCase() +
-                                dataInJson['bid_by'].toString() ==
-                            'null'
-                        ? 'Not bidded yet!'
-                        : dataInJson['bid_by'].toString(),
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
+            height: MediaQuery.of(context).size.height / 6,
+            child: GestureDetector(
+              onTap: () {
+                print(sold[Random().nextInt(sold.length)]);
+                print(Random().nextInt(sold.length));
+              },
+              child: Card(
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Center(
+                    child: Text(
+                      'Bid By:- '.toUpperCase() +
+                                      dataInJson['bid_by'].toString() ==
+                                  'null' ||
+                              dataInJson['bid_by'] == null
+                          ? 'Not bidded yet!'
+                          : dataInJson['bid_by'].toString(),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
                     ),
                   ),
                 ),
@@ -318,7 +395,7 @@ class _ViewOnlyScreenState extends State<ViewOnlyScreen>
           ),
           SizedBox(
             width: double.infinity - 1,
-            height: MediaQuery.of(context).size.height / 7,
+            height: MediaQuery.of(context).size.height / 6,
             child: Card(
               child: Padding(
                 padding: EdgeInsets.all(8.0),

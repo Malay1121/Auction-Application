@@ -96,7 +96,7 @@ class _WaitingScreenState extends State<WaitingScreen> {
                             'Kal aana kal',
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: 80,
+                              fontSize: 60,
                               fontWeight: FontWeight.w600,
                             ),
                           ),

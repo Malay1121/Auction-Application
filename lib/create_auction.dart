@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
 
 import 'package:auction/waiting_screen.dart';
@@ -8,7 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:requests/requests.dart';
 
-TextEditingController priceController = TextEditingController(text: '1000000');
+TextEditingController priceController = TextEditingController(text: '10');
 TextEditingController nameController = TextEditingController();
 TextEditingController imageController = TextEditingController();
 
@@ -62,6 +63,11 @@ class _CreateAuctionState extends State<CreateAuction> {
                     'image': imageController.text,
                     'price': int.parse(priceController.text),
                   });
+                });
+                setState(() {
+                  nameController = TextEditingController(text: '');
+                  imageController = TextEditingController(text: '');
+                  priceController = TextEditingController(text: '10');
                 });
               },
               child: Container(
@@ -167,7 +173,7 @@ class _CreateAuctionState extends State<CreateAuction> {
               ),
             ),
           ),
-          for (var auction in auction['players_model']!)
+          for (var auc in auction['players_model']!)
             Padding(
               padding: EdgeInsets.all(8.0),
               child: Card(
@@ -178,11 +184,11 @@ class _CreateAuctionState extends State<CreateAuction> {
                     children: [
                       CircleAvatar(
                         backgroundImage: NetworkImage(
-                          auction['image'] as String,
+                          auc['image'] as String,
                         ),
                       ),
                       Text(
-                        auction['name'] as String,
+                        auc['name'] as String,
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -190,11 +196,24 @@ class _CreateAuctionState extends State<CreateAuction> {
                         ),
                       ),
                       Text(
-                        'Starting price:- ${auction['price']}',
+                        'Starting price:- ${auc['price']}',
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            auction['players_model']!.remove(auc);
+                            print(auction);
+                          });
+                          print(auc);
+                        },
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.red,
                         ),
                       ),
                     ],

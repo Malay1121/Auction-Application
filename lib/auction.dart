@@ -97,6 +97,7 @@ class _AuctionScreenState extends State<AuctionScreen> {
                 //   }),
                 // );
                 // print(response.body);
+                
                 mentorChannel.sink.add(jsonEncode({
                   'event': 'new_bid',
                   'para': {'price': 1, 'bid_by': widget.name}
